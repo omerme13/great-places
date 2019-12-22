@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
         borderRadius: 300
     },
     buttonText: {
-        fontSize: 16,
+        fontSize: 14,
         fontFamily: 'open-sans-bold',
         textTransform: 'capitalize',
         textAlign: 'center'

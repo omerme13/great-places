@@ -1,26 +1,62 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useEffect } from "react";
+import { StyleSheet, FlatList } from "react-native";
+import { HeaderButtons, Item } from "react-navigation-header-buttons";
+import { useSelector, useDispatch } from "react-redux";
 
-import StyledText from '../StyledText';
+import HeaderButton from "../HeaderButton";
+import PlaceItem from '../PlaceItem';
+
+import { getPlaces } from '../../store/actions/place';
+
 
 const placesList = props => {
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(getPlaces());
+    }, [])
+
+
+    const places = useSelector(state => state.place.places);
+
+    const renderPlaceItem = itemData => {
+        const { id, name, address, imageUrl } = itemData.item;
+            
+        return (
+            <PlaceItem
+                name={name}
+                address={address}
+                imageUrl={imageUrl}
+                pressed={() => {
+                    props.navigation.navigate('PlaceDetails', {id, name})
+                }}
+            />
+        )
+    };
+
     return (
-        <View style={styles.screen}>
-            <StyledText type="title">The placesList Screen</StyledText>
-        </View>
-    )
-}
+        <FlatList
+            data={places}
+            renderItem={renderPlaceItem}
+            keyExtractor={item => String(item.id)}
+        />
+    );
+};
 
-placesList.navigationOptions = {
-    headerTitle: 'Places List'
-}
-
-const styles = StyleSheet.create({
-    screen: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
-    }
-});
+placesList.navigationOptions = navData => {
+    
+    return {
+        headerTitle: "Places List",
+        headerRight: (
+            <HeaderButtons HeaderButtonComponent={HeaderButton}>
+                <Item
+                    title="Add Place"
+                    iconName="md-add"
+                    onPress={() => navData.navigation.navigate("NewPlace")}
+                />
+            </HeaderButtons>
+        )
+    };
+};
 
 export default placesList;
